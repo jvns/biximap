@@ -28,6 +28,11 @@
         var queryString = window.location.search.substring(1);
         $(document).ready( function() {
             jQuery.getJSON("getData.php?" + queryString, function(stations) {
+              for (id in stations) {
+                if (stations[id].installed === "false") {
+                  delete stations[id];
+                }
+              }
                 updateMarkers(stations, map);
                 // set up autocomplete (todo: put this somewhere better)
                 var station_names = [];
