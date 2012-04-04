@@ -1,6 +1,4 @@
-var BIXI;
-var map;
-var infowindow;
+var APP = {}; // global variable
 // get and parse the availability data
 function updateMap(map) {
   var queryString = window.location.search.substring(1);
@@ -33,8 +31,8 @@ zoom: 13,
       mapTypeId: google.maps.MapTypeId.ROADMAP,
   };
   var map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
-  infowindow = new google.maps.InfoWindow();
-  window.map = map;
+  APP.infowindow = new google.maps.InfoWindow();
+  APP.map = map;
   var legendControl = new LegendControl();
   var legendDiv = legendControl.element;
   legendDiv.index = 2;
