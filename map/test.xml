@@ -1,0 +1,3 @@
+<?php
+print file_get_contents("https://profil.bixi.ca/data/bikeStations.xml");
+?>

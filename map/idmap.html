@@ -1,0 +1,110 @@
+<!DOCTYPE html "-//W3C//DTD XHTML 1.0 Strict//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<style type="text/css">
+    /* make the map fullscreen */
+    v\:* {behavior:url(#default#VML);}
+    html, body {width: 100%; height: 100%}
+    body {margin-top: 0px; margin-right: 0px; margin-left: 0px; margin-bottom: 0px}
+</style>
+<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+<title>Bixi station map</title>
+<link rel="stylesheet" href="jquery/autocomplete/jquery.autocomplete.css" type="text/css" />
+<script src="https://www.google.com/jsapi?key=ABQIAAAAhF61bFwaTFHwMU8tLEN_jxToIlT0dE2ah30-70w73iKeUzWWrxRjU1xMlmommCGx2yNPWc_usZb0yQ" type="text/javascript"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+<script type="text/javascript" src="jquery/autocomplete/lib/jquery.bgiframe.min.js"></script>
+<script type="text/javascript" src="jquery/autocomplete/jquery.autocomplete.min.js"></script>
+<script type="text/javascript" src="parseXML.js"></script>
+<script language="javascript" type="text/javascript" src="search.js"></script>
+<script type="text/javascript" src="markerMaker.js"></script>
+<script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=ABQIAAAAhF61bFwaTFHwMU8tLEN_jxToIlT0dE2ah30-70w73iKeUzWWrxRjU1xMlmommCGx2yNPWc_usZb0yQ	&sensor=true" type="text/javascript"></script> 
+<script language="javascript" type="text/javascript" src="controls.js"></script>
+<script type="text/javascript">
+    var map;
+    // get and parse the availability data
+    function updateMap() {
+        var queryString = window.location.search.substring(1);
+        jQuery.getJSON("getData.php?" + queryString, function(stations) {
+            updateMarkers(stations);
+            // set up autocomplete (todo: put this somewhere better)
+            var station_names = [];
+            for (id in stations) {
+                station_names.push(stations[id]['name'])
+            }
+            $("#search").autocomplete(station_names, {matchContains: true, mustMatch: false});
+
+        }
+        );
+    }
+
+
+function idColor(attribute, station) {
+    // attribute = #bikes or #parking spots
+    var baseIcon = new GIcon();
+    baseIcon.iconSize=new GSize(30,42); 
+    baseIcon.iconAnchor=new GPoint(10,42); 
+    baseIcon.infoWindowAnchor=new GPoint(10,3); 
+
+    return new GIcon(baseIcon, "http://chart.apis.google.com/chart?chst=d_map_spin&chld=0.5|0|FFB900|8|_|" + id);
+}
+    function initialize() {
+        // initialize the map and markers
+        if (GBrowserIsCompatible()) {
+            map = new GMap2(document.getElementById("map_canvas"));
+            window.map = map
+            map.setCenter(new GLatLng(45.50811761960114, -73.5747367143631), 13);
+            map.setUIToDefault();
+            map.addControl(new searchControl());
+        }
+        updateMap();
+        
+
+            // keyboard shortcut: '/' => focus search box
+        $(document).bind('keyup', '/', function() {search.focus()});
+        // update the map once a minute
+        self.setInterval(function() {updateMap()}, 300000); 
+    }
+
+    function updateMarkers(stations) {
+        map = window.map;
+        map.stations = stations;
+        var bikeMarkers = createMarkers(stations, 0, idColor);
+        var parkingMarkers = createMarkers(stations, 1, idColor);
+        bpt = new BikeParkingToggle(bikeMarkers, parkingMarkers, map)
+        if (map.BikeParkingToggle) {
+            // remove the control and overlays if it's already there
+            map.removeControl(map.BikeParkingToggle);
+            map.clearOverlays();
+        }
+        map.addControl(bpt);
+        map.BikeParkingToggle = bpt;
+        for (var i = 0; i < parkingMarkers.length; i++) {
+            map.addOverlay(parkingMarkers[i]);
+            map.addOverlay(bikeMarkers[i]);
+            if (map.markertype == 'parking') {
+                bikeMarkers[i].hide();
+            } else {
+                parkingMarkers[i].hide();
+            }
+        }
+    }
+</script>
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-23087669-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+</head>
+<body onload="initialize()" onunload="GUnload()">
+    <div id="map_canvas" style="width: 100%; height: 100%"/>
+</body>
+</html>

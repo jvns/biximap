@@ -1,0 +1,114 @@
+<!DOCTYPE html "-//W3C//DTD XHTML 1.0 Strict//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<style type="text/css">
+    /* make the map fullscreen */
+    v\:* {behavior:url(#default#VML);}
+    html, body {width: 100%; height: 100%}
+    body {margin-top: 0px; margin-right: 0px; margin-left: 0px; margin-bottom: 0px}
+</style>
+<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+<title>Bixi station map</title>
+<link rel="stylesheet" href="jquery/autocomplete/jquery.autocomplete.css" type="text/css" />
+<script src="https://www.google.com/jsapi?key=ABQIAAAAhF61bFwaTFHwMU8tLEN_jxToIlT0dE2ah30-70w73iKeUzWWrxRjU1xMlmommCGx2yNPWc_usZb0yQ" type="text/javascript"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+<script type="text/javascript" src="jquery/autocomplete/lib/jquery.bgiframe.min.js"></script>
+<script type="text/javascript" src="jquery/autocomplete/jquery.autocomplete.min.js"></script>
+<script type="text/javascript" src="search.js"></script>
+<script type="text/javascript" src="discreteColor.js"></script>
+<script type="text/javascript" src="markerMaker.js"></script>
+<script type="text/javascript" src="controls.js"></script>
+<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"> </script>
+<script type="text/javascript">
+    var map;
+    var infowindow;
+    // get and parse the availability data
+    function updateMap(map) {
+        var queryString = window.location.search.substring(1);
+        $(document).ready( function() {
+            jQuery.getJSON("getData.php?" + queryString, function(stations) {
+                updateMarkers(stations, map);
+                // set up autocomplete (todo: put this somewhere better)
+                var station_names = [];
+                for (id in stations) {
+                    station_names.push(stations[id]['name'])
+                }
+                $("#search").autocomplete(station_names, {matchContains: true, mustMatch: false});
+            }
+            );
+        });
+    }
+
+
+    function initialize() {
+        // initialize the map and markers
+        var montreal = new google.maps.LatLng(45.50811761960114, -73.5747367143631);
+        var mapOptions = {
+              zoom: 13,
+              center: montreal,
+              mapTypeId: google.maps.MapTypeId.ROADMAP,
+        };
+        var map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
+        infowindow = new google.maps.InfoWindow();
+        window.map = map;
+        var legendDiv = document.createElement('DIV');
+        var legendControl = new LegendControl(legendDiv);
+        legendDiv.index = 2;
+        map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(legendDiv);
+        var searchDiv = document.createElement('DIV');
+        var searchControl = new SearchControl(searchDiv);
+        searchDiv.index = 1;
+        map.controls[google.maps.ControlPosition.TOP_LEFT].push(searchDiv);
+        // keyboard shortcut: '/' => focus search box
+        $(document).bind('keyup', '/', function() {search.focus()});
+        // update the map once a minute
+        self.setInterval(function() {updateMap(map)}, 300000); 
+        updateMap(map);
+    }
+
+    function updateMarkers(stations, map) {
+        map.stations = stations;
+        var bikeMarkers = createMarkers(stations, 0, discreteColor, map);
+        var parkingMarkers = createMarkers(stations, 1, discreteColor, map);
+        map.bikeMarkers = bikeMarkers;
+        map.parkingMarkers = parkingMarkers;
+        bikeParkingDiv = document.createElement('DIV');
+        bpt = new BikeParkingToggle(bikeParkingDiv, bikeMarkers, parkingMarkers, map);
+        bpt.index = 2;
+        map.controls[google.maps.ControlPosition.RIGHT_TOP].push(bikeParkingDiv);
+        if (map.BikeParkingToggle) {
+            // remove the control and overlays if it's already there
+            map.removeControl(map.BikeParkingToggle);
+            map.clearOverlays();
+        }
+        map.BikeParkingToggle = bpt;
+        for (id in parkingMarkers) {
+            parkingMarkers[id].setMap(map);
+            bikeMarkers[id].setMap(map);
+            if (map.markertype == 'parking') {
+                bikeMarkers[id].setVisible(false);
+            } else {
+                parkingMarkers[id].setVisible(false);
+            }
+        }
+    }
+</script>
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-23087669-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+</head>
+<body onload="initialize();" onunload="GUnload()">
+    <div id="map_canvas" style="width: 100%; height: 100%"/>
+</body>
+</html>
