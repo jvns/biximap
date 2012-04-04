@@ -4,7 +4,7 @@ if (time() - filemtime('dataCache.kml') < 3) {
     $data =  file_get_contents('dataCache.kml');
 } else {
     // get new data
-    $data = file_get_contents('https://profil.bixi.ca/data/bikeStations.xml');
+    $data = file_get_contents('https://montreal.bixi.com/data/bikeStations.xml');
     // save it to the cache
     $fh = fopen('dataCache.kml', 'w');
     fwrite($fh, $data);
