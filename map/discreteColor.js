@@ -1,7 +1,7 @@
 // coloring function with 4 colours
 function discreteColor(station, toggle, map) {
     var attribute;
-    if (toggle == 0) {
+    if (toggle == 'nbBikes') {
         attribute = station['nbBikes'];
     } else {
         attribute = station['nbEmptyDocks'];

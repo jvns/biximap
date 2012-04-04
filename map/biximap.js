@@ -51,8 +51,8 @@ zoom: 13,
 
 function updateMarkers(stations, map) {
   map.stations = stations;
-  var bikeMarkers = createMarkers(stations, 0, discreteColor, map);
-  var parkingMarkers = createMarkers(stations, 1, discreteColor, map);
+  var bikeMarkers = createMarkers(stations, 'nbBikes', discreteColor, map);
+  var parkingMarkers = createMarkers(stations, 'nbParking', discreteColor, map);
   map.bikeMarkers = bikeMarkers;
   map.parkingMarkers = parkingMarkers;
   bikeParkingDiv = document.createElement('DIV');
