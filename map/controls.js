@@ -1,17 +1,20 @@
 /** Legend, search, and toggle controls
  */
 
-function LegendControl(legendDiv) {
+function LegendControl() {
+    var legendDiv = document.createElement('div');
     legendDiv.innerHTML = '<table> <tr> <td bgcolor="black" width=15>  </td> <td> 0 parking spots </td> </tr> <tr> <td bgcolor="red" width=15>  </td> <td> 1-2 parking spots </td> </tr> <tr> <td bgcolor="#FFB900" width=15>  </td> <td> 3-6 parking spots </td> </tr> <tr> <td bgcolor="#20C900" width=15>  </td> <td> 7+ parking spots </td> </tr> </table>';
     legendDiv.style.backgroundColor = "white";
     legendDiv.style.border = "2px solid black";
     legendDiv.style.padding = "2px";
     legendDiv.style.textAlign = "center";
     legendDiv.style.cursor = "pointer";
+    this.element = legendDiv;
 }
 
 // Search control
-function SearchControl(searchDiv) {
+function SearchControl() {
+    var searchDiv = document.createElement('div');
     searchDiv.innerHTML = '<form onSubmit="findStation(window.map);return false"> <input id="search" size="35"> <input type="button" value="Go" onClick="findStation(window.map);return false"> </form>';
     searchDiv.style.backgroundColor = "white";
     searchDiv.style.border = "1px solid black";
@@ -20,6 +23,7 @@ function SearchControl(searchDiv) {
     searchDiv.style.textAlign = "left";
     //    searchDiv.style.width = "10em";
     searchDiv.style.cursor = "pointer";
+    this.element = searchDiv;
 }
 
 

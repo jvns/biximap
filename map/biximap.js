@@ -1,3 +1,4 @@
+var BIXI;
 var map;
 var infowindow;
 // get and parse the availability data
@@ -34,12 +35,12 @@ zoom: 13,
   var map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
   infowindow = new google.maps.InfoWindow();
   window.map = map;
-  var legendDiv = document.createElement('DIV');
-  var legendControl = new LegendControl(legendDiv);
+  var legendControl = new LegendControl();
+  var legendDiv = legendControl.element;
   legendDiv.index = 2;
   map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(legendDiv);
-  var searchDiv = document.createElement('DIV');
-  var searchControl = new SearchControl(searchDiv);
+  var searchControl = new SearchControl();
+  var searchDiv = searchControl.element;
   searchDiv.index = 1;
   map.controls[google.maps.ControlPosition.TOP_LEFT].push(searchDiv);
   // keyboard shortcut: '/' => focus search box
