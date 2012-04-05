@@ -12,20 +12,6 @@ Biximap.LegendControl = function() {
     this.control = legendDiv;
 }
 
-// Search control
-Biximap.SearchControl = function() {
-    var searchDiv = document.createElement('div');
-    searchDiv.innerHTML = '<form onSubmit="Biximap.findStation(Biximap.state.map);return false"> <input id="search" size="35"> <input type="button" value="Go" onClick="Biximap.findStation(Biximap.state.map);return false"> </form>';
-    searchDiv.style.backgroundColor = "white";
-    searchDiv.style.border = "1px solid black";
-    searchDiv.style.height = "28px";
-    searchDiv.style.padding = "3px";
-    searchDiv.style.textAlign = "left";
-    //    searchDiv.style.width = "10em";
-    searchDiv.style.cursor = "pointer";
-    this.control = searchDiv;
-}
-
 Biximap.BikeParkingToggle = function() {
   var self = this;
   this.showBikesButton = $('<div class="bikeparking-button"> Show bikes </div>')[0];

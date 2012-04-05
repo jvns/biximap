@@ -41,9 +41,6 @@ Biximap.initialize = function() {
   var legendControl = new Biximap.LegendControl();
   legendControl.control.index = 2;
   map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(legendControl.control);
-  var searchControl = new Biximap.SearchControl();
-  searchControl.control.index = 1;
-  map.controls[google.maps.ControlPosition.TOP_LEFT].push(searchControl.control);
   var bikeParkingToggle = new Biximap.BikeParkingToggle();
   Biximap.state.bikeParkingToggle = bikeParkingToggle;
   bikeParkingToggle.control.index = 2;

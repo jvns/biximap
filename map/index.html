@@ -35,6 +35,15 @@
 </script>
 </head>
 <body onload="Biximap.initialize();" onunload="GUnload()">
-    <div id="map_canvas" style="width: 100%; height: 100%"/>
+    
+  <div id="header"> 
+    <div id="searchbox">
+      <form onSubmit="Biximap.findStation(Biximap.state.map);return false"> 
+        Find a station: <input id="search" size="35"> 
+        <input type="button" value="Go" onClick="Biximap.findStation(Biximap.state.map);return false"> </form>
+    </div>
+    <div id="infoBox"> </div>
+  </div>
+  <div id="map_canvas" style=""/>
 </body>
 </html>

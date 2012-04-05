@@ -31,5 +31,11 @@ Biximap.createMarker = function(station, toggle, imagecreator, map) {
         Biximap.state.infowindow.setContent(contentString);
         Biximap.state.infowindow.open(map, marker);
         });
+    google.maps.event.addListener(marker, "mouseover", function() {
+      $('#infoBox').html(station['name'] + ": " + station['nbBikes'] + " bikes, " + station['nbEmptyDocks'] + " spaces");
+    });
+    google.maps.event.addListener(marker, "mouseout", function() {
+      $('#infoBox').html('');
+    });
     return marker;
 }

@@ -21,10 +21,10 @@ Biximap.findStation = function (map) {
       longitude = stations[id]['longitude'];
       map.setCenter(new google.maps.LatLng(latitude, longitude));
       map.setZoom(16);
-      marker = Biximap.state.bikeMarkers[id];
-      marker.setAnimation(google.maps.Animation.BOUNCE);
-      marker = Biximap.state.parkingMarkers[id];
-      marker.setAnimation(google.maps.Animation.BOUNCE);
+      // marker = Biximap.state.bikeMarkers[id];
+      // marker.setAnimation(google.maps.Animation.BOUNCE);
+      // marker = Biximap.state.parkingMarkers[id];
+      // marker.setAnimation(google.maps.Animation.BOUNCE);
       break;
     }
   }
