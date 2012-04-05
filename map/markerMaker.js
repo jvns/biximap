@@ -24,12 +24,12 @@ APP.createMarker = function(station, toggle, imagecreator, map) {
     });
 
     google.maps.event.addListener(marker, "click", function() {
-        // Always use the same infowindow, just update it as necessary
+        // We always use the same infowindow, just update it as necessary
         var contentString = "<b>" + station['name'] + "</b> <br>" + new
         String(station['nbBikes']) + " bikes" + ", " +new
         String(station['nbEmptyDocks']) + " parking spots";
-        APP.infowindow.setContent(contentString);
-        APP.infowindow.open(map, marker);
+        APP.state.infowindow.setContent(contentString);
+        APP.state.infowindow.open(map, marker);
         });
     return marker;
 }

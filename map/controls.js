@@ -33,7 +33,7 @@ APP.BikeParkingToggle = function() {
   this.control = $('<div>').append(this.showBikesButton)
                          .append(this.showParkingButton)[0];
   // Set 'parking' active, to start
-  this.activateParkingCallback().call(this);
+  this.activateBikesCallback().call(this);
   google.maps.event.addDomListener(this.showBikesButton, "click", this.activateBikesCallback());
   google.maps.event.addDomListener(this.showParkingButton, "click", this.activateParkingCallback());
 }

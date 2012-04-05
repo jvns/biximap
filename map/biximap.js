@@ -35,7 +35,8 @@ APP.initialize = function() {
   var map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
   APP.state.map = map;
   // Add an infowindow 
-  APP.infowindow = new google.maps.InfoWindow();
+  APP.state.infowindow = new google.maps.InfoWindow();
+  google.maps.event.addListener(APP.state.map, 'click', function() {APP.state.infowindow.close()});
   // Initialize the controls
   var legendControl = new APP.LegendControl();
   legendControl.control.index = 2;
