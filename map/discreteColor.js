@@ -1,5 +1,5 @@
 // coloring function with 4 colours
-APP.discreteColor = function(station, toggle, map) {
+Biximap.discreteColor = function(station, toggle, map) {
     var attribute;
     if (toggle == 'nbBikes') {
         attribute = station['nbBikes'];

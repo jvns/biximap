@@ -1,17 +1,17 @@
-var APP = {}; // global variable
-APP.state = {};
+var Biximap = {}; // global variable
+Biximap.state = {};
 // get and parse the availability data
-APP.updateMap = function() {
+Biximap.updateMap = function() {
   var queryString = window.location.search.substring(1);
   $(document).ready( function() {
     jQuery.getJSON("getData.php?" + queryString, function(stations) {
-        APP.state.stations = stations;
+        Biximap.state.stations = stations;
         for (id in stations) {
           if (stations[id].installed === "false") {
             delete stations[id];
           }
         }
-        APP.updateMarkers();
+        Biximap.updateMarkers();
         // set up autocomplete (todo: put this somewhere better)
         var station_names = [];
         for (id in stations) {
@@ -24,7 +24,7 @@ APP.updateMap = function() {
 }
 
 
-APP.initialize = function() {
+Biximap.initialize = function() {
   // initialize the map
   var montreal = new google.maps.LatLng(45.50811761960114, -73.5747367143631);
   var mapOptions = {
@@ -33,39 +33,39 @@ APP.initialize = function() {
       mapTypeId: google.maps.MapTypeId.ROADMAP
   };
   var map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
-  APP.state.map = map;
+  Biximap.state.map = map;
   // Add an infowindow 
-  APP.state.infowindow = new google.maps.InfoWindow();
-  google.maps.event.addListener(APP.state.map, 'click', function() {APP.state.infowindow.close()});
+  Biximap.state.infowindow = new google.maps.InfoWindow();
+  google.maps.event.addListener(Biximap.state.map, 'click', function() {Biximap.state.infowindow.close()});
   // Initialize the controls
-  var legendControl = new APP.LegendControl();
+  var legendControl = new Biximap.LegendControl();
   legendControl.control.index = 2;
   map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(legendControl.control);
-  var searchControl = new APP.SearchControl();
+  var searchControl = new Biximap.SearchControl();
   searchControl.control.index = 1;
   map.controls[google.maps.ControlPosition.TOP_LEFT].push(searchControl.control);
-  var bikeParkingToggle = new APP.BikeParkingToggle();
-  APP.state.bikeParkingToggle = bikeParkingToggle;
+  var bikeParkingToggle = new Biximap.BikeParkingToggle();
+  Biximap.state.bikeParkingToggle = bikeParkingToggle;
   bikeParkingToggle.control.index = 2;
   // Initialize the search widget
   map.controls[google.maps.ControlPosition.RIGHT_TOP].push(bikeParkingToggle.control);
   // keyboard shortcut: '/' => focus search box
   $(document).bind('keyup', '/', function() {search.focus()});
   // update the map once a minute
-  self.setInterval(function() {APP.updateMap(map)}, 300000); 
+  self.setInterval(function() {Biximap.updateMap(map)}, 300000); 
   // Update the map for the first time
-  APP.updateMap();
+  Biximap.updateMap();
 }
 
-APP.updateMarkers = function() {
-  var stations = APP.state.stations;
-  var map = APP.state.map;
-  var bikeMarkers    = APP.createMarkers(stations, 'nbBikes', APP.discreteColor, map);
-  var parkingMarkers = APP.createMarkers(stations, 'nbParking', APP.discreteColor, map);
-  APP.state.bikeMarkers = bikeMarkers;
-  APP.state.parkingMarkers = parkingMarkers;
+Biximap.updateMarkers = function() {
+  var stations = Biximap.state.stations;
+  var map = Biximap.state.map;
+  var bikeMarkers    = Biximap.createMarkers(stations, 'nbBikes', Biximap.discreteColor, map);
+  var parkingMarkers = Biximap.createMarkers(stations, 'nbParking', Biximap.discreteColor, map);
+  Biximap.state.bikeMarkers = bikeMarkers;
+  Biximap.state.parkingMarkers = parkingMarkers;
   for (id in parkingMarkers) {
-    if (APP.state.markertype == 'parking') {
+    if (Biximap.state.markertype == 'parking') {
       bikeMarkers[id].setVisible(false);
     } else {
       parkingMarkers[id].setVisible(false);

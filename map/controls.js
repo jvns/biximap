@@ -1,7 +1,7 @@
 /** Legend, search, and toggle controls
  */
 
-APP.LegendControl = function() {
+Biximap.LegendControl = function() {
     var legendDiv = document.createElement('div');
     legendDiv.innerHTML = '<table> <tr> <td bgcolor="black" width=15>  </td> <td> 0 parking spots </td> </tr> <tr> <td bgcolor="red" width=15>  </td> <td> 1-2 parking spots </td> </tr> <tr> <td bgcolor="#FFB900" width=15>  </td> <td> 3-6 parking spots </td> </tr> <tr> <td bgcolor="#20C900" width=15>  </td> <td> 7+ parking spots </td> </tr> </table>';
     legendDiv.style.backgroundColor = "white";
@@ -13,9 +13,9 @@ APP.LegendControl = function() {
 }
 
 // Search control
-APP.SearchControl = function() {
+Biximap.SearchControl = function() {
     var searchDiv = document.createElement('div');
-    searchDiv.innerHTML = '<form onSubmit="APP.findStation(APP.state.map);return false"> <input id="search" size="35"> <input type="button" value="Go" onClick="APP.findStation(APP.state.map);return false"> </form>';
+    searchDiv.innerHTML = '<form onSubmit="Biximap.findStation(Biximap.state.map);return false"> <input id="search" size="35"> <input type="button" value="Go" onClick="Biximap.findStation(Biximap.state.map);return false"> </form>';
     searchDiv.style.backgroundColor = "white";
     searchDiv.style.border = "1px solid black";
     searchDiv.style.height = "28px";
@@ -26,7 +26,7 @@ APP.SearchControl = function() {
     this.control = searchDiv;
 }
 
-APP.BikeParkingToggle = function() {
+Biximap.BikeParkingToggle = function() {
   var self = this;
   this.showBikesButton = $('<div class="bikeparking-button"> Show bikes </div>')[0];
   this.showParkingButton = $('<div class="bikeparking-button"> Show parking </div>')[0];
@@ -39,18 +39,18 @@ APP.BikeParkingToggle = function() {
 }
 
 
-APP.BikeParkingToggle.prototype.activateBikesCallback = function() {
+Biximap.BikeParkingToggle.prototype.activateBikesCallback = function() {
   var self = this;
   return function() {
-    if (APP.state.markertype === 'bike') {
+    if (Biximap.state.markertype === 'bike') {
       return;
     }
     $(self.showBikesButton).addClass('active');
     $(self.showParkingButton).removeClass('active');
-    APP.state.markertype = 'bike';
-    for (id in APP.state.bikeMarkers) {
-      APP.state.bikeMarkers[id].setVisible(true)
-      APP.state.parkingMarkers[id].setVisible(false)
+    Biximap.state.markertype = 'bike';
+    for (id in Biximap.state.bikeMarkers) {
+      Biximap.state.bikeMarkers[id].setVisible(true)
+      Biximap.state.parkingMarkers[id].setVisible(false)
     }
     var tables = document.getElementsByTagName('td');
     for (var i = 0; i < tables.length; i++) {
@@ -59,18 +59,18 @@ APP.BikeParkingToggle.prototype.activateBikesCallback = function() {
   };
 }
 
-APP.BikeParkingToggle.prototype.activateParkingCallback = function() {
+Biximap.BikeParkingToggle.prototype.activateParkingCallback = function() {
   var self = this;
   return function() {
-    if (APP.state.markertype === 'parking') {
+    if (Biximap.state.markertype === 'parking') {
       return;
     }
     $(self.showBikesButton).removeClass('active');
     $(self.showParkingButton).addClass('active');
-    APP.state.markertype = 'parking';
-    for (id in APP.state.parkingMarkers) {
-      APP.state.bikeMarkers[id].setVisible(false)
-      APP.state.parkingMarkers[id].setVisible(true)
+    Biximap.state.markertype = 'parking';
+    for (id in Biximap.state.parkingMarkers) {
+      Biximap.state.bikeMarkers[id].setVisible(false)
+      Biximap.state.parkingMarkers[id].setVisible(true)
     }
     var tables = document.getElementsByTagName('td');
     for (var i = 0; i < tables.length; i++) {

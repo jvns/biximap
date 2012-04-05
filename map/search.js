@@ -1,4 +1,4 @@
-APP.makeShadow = function(id, stations) {
+Biximap.makeShadow = function(id, stations) {
     // makes a shadow for station with id 
     // create the icon
     var baseIcon = new GIcon();
@@ -11,8 +11,8 @@ APP.makeShadow = function(id, stations) {
     var marker = createMarker(point, stations[id], 0, function () {return icon});
     return marker;
 }
-APP.findStation = function (map) {
-  var stations = APP.state.stations;
+Biximap.findStation = function (map) {
+  var stations = Biximap.state.stations;
   var text = document.getElementById('search').value;
   for (id in stations) {
     if (stations[id]['name'] == text) {
@@ -21,15 +21,15 @@ APP.findStation = function (map) {
       longitude = stations[id]['longitude'];
       map.setCenter(new google.maps.LatLng(latitude, longitude));
       map.setZoom(16);
-      marker = APP.state.bikeMarkers[id];
+      marker = Biximap.state.bikeMarkers[id];
       marker.setAnimation(google.maps.Animation.BOUNCE);
-      marker = APP.state.parkingMarkers[id];
+      marker = Biximap.state.parkingMarkers[id];
       marker.setAnimation(google.maps.Animation.BOUNCE);
       break;
     }
   }
 }
-APP.highlight = function(value, term) {
+Biximap.highlight = function(value, term) {
     // Strip accents from 'term' for an accents-insensitive search
     term = stripAccents(term);
 
@@ -63,7 +63,7 @@ APP.highlight = function(value, term) {
     return highlighted_value;
 }
 
-APP.stripAccents = function(str) {
+Biximap.stripAccents = function(str) {
     var rExps=[
     {re:/[\xC0-\xC6]/g, ch:'A'},
     {re:/[\xE0-\xE6]/g, ch:'a'},
