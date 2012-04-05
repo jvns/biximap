@@ -1,14 +1,14 @@
 // functions to make Google Maps markers
 
-function createMarkers(stations, toggle, imagecreator, map) {
+APP.createMarkers = function(stations, toggle, imagecreator, map) {
     markers = new Object();
     for (id in stations) {
-        markers[id] = createMarker(stations[id], toggle, imagecreator, map);
+        markers[id] = APP.createMarker(stations[id], toggle, imagecreator, map);
     }
     return markers;
 }
 
-function createMarker(station, toggle, imagecreator, map) {
+APP.createMarker = function(station, toggle, imagecreator, map) {
     iconSize=new google.maps.Size(20,32); 
     iconAnchor=new google.maps.Point(10,32); 
     infoWindowAnchor=new google.maps.Point(10,3); 
@@ -32,5 +32,4 @@ function createMarker(station, toggle, imagecreator, map) {
         APP.infowindow.open(map, marker);
         });
     return marker;
-
 }

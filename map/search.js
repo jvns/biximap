@@ -1,4 +1,4 @@
-function makeShadow(id,stations) {
+APP.makeShadow = function(id, stations) {
     // makes a shadow for station with id 
     // create the icon
     var baseIcon = new GIcon();
@@ -11,24 +11,25 @@ function makeShadow(id,stations) {
     var marker = createMarker(point, stations[id], 0, function () {return icon});
     return marker;
 }
-function findStation(map) {
-    var text = document.getElementById('search').value;
-    for (id in map.stations) {
-        if (map.stations[id]['name'] == text) {
-            // zoom to this station's location
-            latitude = map.stations[id]['latitude']
-            longitude = map.stations[id]['longitude']
-            map.setCenter(new google.maps.LatLng(latitude, longitude));
-            map.setZoom(16);
-            marker = map.bikeMarkers[id];
-            marker.setAnimation(google.maps.Animation.BOUNCE);
-            marker = map.parkingMarkers[id];
-            marker.setAnimation(google.maps.Animation.BOUNCE);
-            break;
-        }
+APP.findStation = function (map) {
+  var stations = APP.state.stations;
+  var text = document.getElementById('search').value;
+  for (id in stations) {
+    if (stations[id]['name'] == text) {
+      // zoom to this station's location
+      latitude = stations[id]['latitude'];
+      longitude = stations[id]['longitude'];
+      map.setCenter(new google.maps.LatLng(latitude, longitude));
+      map.setZoom(16);
+      marker = APP.state.bikeMarkers[id];
+      marker.setAnimation(google.maps.Animation.BOUNCE);
+      marker = APP.state.parkingMarkers[id];
+      marker.setAnimation(google.maps.Animation.BOUNCE);
+      break;
     }
+  }
 }
-function highlight(value, term) {
+APP.highlight = function(value, term) {
     // Strip accents from 'term' for an accents-insensitive search
     term = stripAccents(term);
 
@@ -62,7 +63,7 @@ function highlight(value, term) {
     return highlighted_value;
 }
 
-function stripAccents(str) {
+APP.stripAccents = function(str) {
     var rExps=[
     {re:/[\xC0-\xC6]/g, ch:'A'},
     {re:/[\xE0-\xE6]/g, ch:'a'},

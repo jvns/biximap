@@ -15,11 +15,11 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
 <script type="text/javascript" src="jquery/autocomplete/lib/jquery.bgiframe.min.js"></script>
 <script type="text/javascript" src="jquery/autocomplete/jquery.autocomplete.min.js"></script>
+<script type="text/javascript" src="biximap.js"></script>
 <script type="text/javascript" src="search.js"></script>
 <script type="text/javascript" src="discreteColor.js"></script>
 <script type="text/javascript" src="markerMaker.js"></script>
 <script type="text/javascript" src="controls.js"></script>
-<script type="text/javascript" src="biximap.js"></script>
 <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"> </script>
 <script type="text/javascript">
   var _gaq = _gaq || [];
@@ -33,7 +33,7 @@
   })();
 </script>
 </head>
-<body onload="initialize();" onunload="GUnload()">
+<body onload="APP.initialize();" onunload="GUnload()">
     <div id="map_canvas" style="width: 100%; height: 100%"/>
 </body>
 </html>

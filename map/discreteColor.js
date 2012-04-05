@@ -1,5 +1,5 @@
 // coloring function with 4 colours
-function discreteColor(station, toggle, map) {
+APP.discreteColor = function(station, toggle, map) {
     var attribute;
     if (toggle == 'nbBikes') {
         attribute = station['nbBikes'];
