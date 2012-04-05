@@ -44,6 +44,7 @@ APP.initialize = function() {
   searchControl.control.index = 1;
   map.controls[google.maps.ControlPosition.TOP_LEFT].push(searchControl.control);
   var bikeParkingToggle = new APP.BikeParkingToggle();
+  APP.state.bikeParkingToggle = bikeParkingToggle;
   bikeParkingToggle.control.index = 2;
   // Initialize the search widget
   map.controls[google.maps.ControlPosition.RIGHT_TOP].push(bikeParkingToggle.control);
@@ -63,7 +64,7 @@ APP.updateMarkers = function() {
   APP.state.bikeMarkers = bikeMarkers;
   APP.state.parkingMarkers = parkingMarkers;
   for (id in parkingMarkers) {
-    if (APP.markertype == 'parking') {
+    if (APP.state.markertype == 'parking') {
       bikeMarkers[id].setVisible(false);
     } else {
       parkingMarkers[id].setVisible(false);

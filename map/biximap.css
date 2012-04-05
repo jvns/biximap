@@ -1,0 +1,16 @@
+div .bikeparking-button {
+  background-color: white;
+  border: 1px solid black;
+  color: black;
+  cursor: pointer;
+  font: small Arial;
+  margin-bottom: 3px;
+  padding: 2px;
+  text-align: center;
+  text-decoration: underline;
+  width: 6em;
+}
+
+div .active {
+  background-color: lightblue;
+}

@@ -28,48 +28,26 @@ APP.SearchControl = function() {
 
 APP.BikeParkingToggle = function() {
   var self = this;
-  this.showBikesButton = $('<div> Show Bikes </div>')[0];
-  this.showParkingButton = $('<div> Show Parking </div>')[0];
+  this.showBikesButton = $('<div class="bikeparking-button"> Show bikes </div>')[0];
+  this.showParkingButton = $('<div class="bikeparking-button"> Show parking </div>')[0];
   this.control = $('<div>').append(this.showBikesButton)
                          .append(this.showParkingButton)[0];
-  this.setButtonStyle_(this.showBikesButton);
-  this.setButtonStyle_(this.showParkingButton);
-  if (APP.markertype == 'bike') {
-    this.showBikesButton.style.backgroundColor = "lightblue";
-    this.showParkingButton.style.backgroundColor = "white";
-  } else {
-    APP.markertype = 'parking';
-    this.showBikesButton.style.backgroundColor = "white";
-    this.showParkingButton.style.backgroundColor = "lightblue";
-  }
+  // Set 'parking' active, to start
+  this.activateParkingCallback().call(this);
   google.maps.event.addDomListener(this.showBikesButton, "click", this.activateBikesCallback());
   google.maps.event.addDomListener(this.showParkingButton, "click", this.activateParkingCallback());
 }
 
 
-// Sets the proper CSS for the given button element.
-APP.BikeParkingToggle.prototype.setButtonStyle_ = function(button) {
-  button.style.textDecoration = "underline";
-  button.style.color = "#000000";
-  button.style.backgroundColor = "white";
-  button.style.font = "small Arial";
-  button.style.border = "1px solid black";
-  button.style.padding = "2px";
-  button.style.marginBottom = "3px";
-  button.style.textAlign = "center";
-  button.style.width = "6em";
-  button.style.cursor = "pointer";
-}
-
 APP.BikeParkingToggle.prototype.activateBikesCallback = function() {
   var self = this;
   return function() {
-    if (self.markertype === 'bike') {
+    if (APP.state.markertype === 'bike') {
       return;
     }
-    self.showBikesButton.style.backgroundColor = "lightblue";
-    self.showParkingButton.style.backgroundColor = "white";
-    self.markertype = 'bike';
+    $(self.showBikesButton).addClass('active');
+    $(self.showParkingButton).removeClass('active');
+    APP.state.markertype = 'bike';
     for (id in APP.state.bikeMarkers) {
       APP.state.bikeMarkers[id].setVisible(true)
       APP.state.parkingMarkers[id].setVisible(false)
@@ -84,12 +62,12 @@ APP.BikeParkingToggle.prototype.activateBikesCallback = function() {
 APP.BikeParkingToggle.prototype.activateParkingCallback = function() {
   var self = this;
   return function() {
-    if (self.markertype === 'parking') {
+    if (APP.state.markertype === 'parking') {
       return;
     }
-    self.showBikesButton.style.backgroundColor = "white";
-    self.showParkingButton.style.backgroundColor = "lightblue";
-    self.markertype = 'parking';
+    $(self.showBikesButton).removeClass('active');
+    $(self.showParkingButton).addClass('active');
+    APP.state.markertype = 'parking';
     for (id in APP.state.parkingMarkers) {
       APP.state.bikeMarkers[id].setVisible(false)
       APP.state.parkingMarkers[id].setVisible(true)
