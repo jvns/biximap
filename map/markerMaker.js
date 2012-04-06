@@ -44,7 +44,6 @@ Biximap.createMarker = function(station, toggle, imagecreator, map) {
       for (i = 0; i < numDocks; i++) {
         html += parking;
       }
-      console.log(html);
       $('#infoText').html(station['name']);
       $('#progressBar').html(html);
     });

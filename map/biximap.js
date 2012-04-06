@@ -2,6 +2,7 @@ var Biximap = {}; // global variable
 Biximap.state = {};
 // get and parse the availability data
 Biximap.updateMap = function() {
+  $('updateNotice').show('fast');
   var queryString = window.location.search.substring(1);
   $(document).ready( function() {
     jQuery.getJSON("getData.php?" + queryString, function(stations) {
@@ -21,6 +22,7 @@ Biximap.updateMap = function() {
       }
     );
   });
+  $('updateNotice').hide('fast');
 }
 
 
@@ -48,8 +50,8 @@ Biximap.initialize = function() {
   map.controls[google.maps.ControlPosition.RIGHT_TOP].push(bikeParkingToggle.control);
   // keyboard shortcut: '/' => focus search box
   $(document).bind('keyup', '/', function() {search.focus()});
-  // update the map once a minute
-  self.setInterval(function() {Biximap.updateMap(map)}, 300000); 
+  // update the map once every five minutes
+  self.setInterval(function() {Biximap.updateMap()}, 300000); 
   // Update the map for the first time
   Biximap.updateMap();
 }
@@ -57,15 +59,23 @@ Biximap.initialize = function() {
 Biximap.updateMarkers = function() {
   var stations = Biximap.state.stations;
   var map = Biximap.state.map;
-  var bikeMarkers    = Biximap.createMarkers(stations, 'nbBikes', Biximap.discreteColor, map);
-  var parkingMarkers = Biximap.createMarkers(stations, 'nbParking', Biximap.discreteColor, map);
-  Biximap.state.bikeMarkers = bikeMarkers;
-  Biximap.state.parkingMarkers = parkingMarkers;
-  for (id in parkingMarkers) {
+  var oldBikeMarkers    = Biximap.state.bikeMarkers;
+  var oldParkingMarkers = Biximap.state.parkingMarkers;
+  var newBikeMarkers    = Biximap.createMarkers(stations, 'nbBikes', Biximap.discreteColor, map);
+  var newParkingMarkers = Biximap.createMarkers(stations, 'nbParking', Biximap.discreteColor, map);
+  var i;
+  // Delete old markers
+  for (i in oldBikeMarkers) {
+    oldBikeMarkers[i].setMap(null);
+    oldParkingMarkers[i].setMap(null);
+  }
+  Biximap.state.bikeMarkers = newBikeMarkers;
+  Biximap.state.parkingMarkers = newParkingMarkers;
+  for (id in newParkingMarkers) {
     if (Biximap.state.markertype == 'parking') {
-      bikeMarkers[id].setVisible(false);
+      newBikeMarkers[id].setVisible(false);
     } else {
-      parkingMarkers[id].setVisible(false);
+      newParkingMarkers[id].setVisible(false);
     }
   }
 }
