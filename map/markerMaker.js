@@ -32,10 +32,24 @@ Biximap.createMarker = function(station, toggle, imagecreator, map) {
         Biximap.state.infowindow.open(map, marker);
         });
     google.maps.event.addListener(marker, "mouseover", function() {
-      $('#infoBox').html(station['name'] + ": " + station['nbBikes'] + " bikes, " + station['nbEmptyDocks'] + " spaces");
+      var numBikes = station['nbBikes'];
+      var numDocks = station['nbEmptyDocks'];
+      var total = numBikes + numDocks;
+      var bikebox = "<span class='bike'>&nbsp;&nbsp;</span>"
+      var parking = "<span class='parking'>&nbsp;&nbsp;</span>"
+      var html = "";
+      for (i = 0; i < numBikes; i++) {
+        html += bikebox;
+      }
+      for (i = 0; i < numDocks; i++) {
+        html += parking;
+      }
+      console.log(html);
+      $('#infoText').html(station['name']);
+      $('#progressBar').html(html);
     });
     google.maps.event.addListener(marker, "mouseout", function() {
-      $('#infoBox').html('');
+      // $('#infoBox').html('');
     });
     return marker;
 }

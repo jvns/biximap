@@ -37,12 +37,15 @@
 <body onload="Biximap.initialize();" onunload="GUnload()">
     
   <div id="header"> 
-    <div id="searchbox">
+    <div id="firstrow">
+    <span id="searchbox">
       <form onSubmit="Biximap.findStation(Biximap.state.map);return false"> 
         Find a station: <input id="search" size="35"> 
-        <input type="button" value="Go" onClick="Biximap.findStation(Biximap.state.map);return false"> </form>
-    </div>
-    <div id="infoBox"> </div>
+        <input class="button" type="button" value="Go" onClick="Biximap.findStation(Biximap.state.map);return false"> </form>
+    </span>
+    <span id="infoText"> </span>
+    <span id="progressBar"> </span>
+  </div>
   </div>
   <div id="map_canvas" style=""/>
 </body>

@@ -18,22 +18,55 @@ div .active {
 body {
   background-color: black;
 }
+
 #header {
-  background-color: black;
-  height: 5%;
-  color: lightgray;
+  position:absolute
+  font-weight: bold;
+  height: 3.5em;
+  color: #eee;
+  font-family:sans-serif;
 }
 #searchbox {
-  background-color: black;
+  float:left;
   text-align: left;
-  float: left;
+  height: 1.5em;
 }
-#infoBox {
-  background-color: black;
-  float: right;
+#infoText {
+  height: 1.5em;
+  align:right;
+  float:right;
+  clear:right;
+}
+#progressBar {
+  margin-top:0.25em;
+  text-align: right;
+  height: 1em;
+  float:right;
+  clear:right;
 }
 #map_canvas {
   width: 100%;
-  height: 95%;
+  height: 90%;
   overflow: auto;
+}
+
+.bike {
+  background-color: #D52B1E;
+}
+.parking {
+  background-color: white;
+}
+.bike, .parking {
+  height: 8px;
+  border-color: black;
+  border-style: solid;
+  border-width: 1px 1px 0px 0px;
+}
+input {
+  border: 1px solid;
+}
+.button {
+  border: 1px solid #D52B1E;
+  background-color: #D52B1E;
+  color: white;
 }
