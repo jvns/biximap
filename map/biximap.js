@@ -18,7 +18,11 @@ Biximap.updateMap = function() {
         for (id in stations) {
           station_names.push(stations[id]['name'])
         }
-        $("#search").autocomplete(station_names, {matchContains: true, mustMatch: false});
+        $("#search").autocomplete({
+          matchContains: true, 
+          mustMatch: false,
+          source: station_names
+        });
       }
     );
   });

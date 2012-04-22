@@ -2,13 +2,7 @@
  */
 
 Biximap.LegendControl = function() {
-    var legendDiv = document.createElement('div');
-    legendDiv.innerHTML = '<table> <tr> <td bgcolor="black" width=15>  </td> <td> 0 parking spots </td> </tr> <tr> <td bgcolor="red" width=15>  </td> <td> 1-2 parking spots </td> </tr> <tr> <td bgcolor="#FFB900" width=15>  </td> <td> 3-6 parking spots </td> </tr> <tr> <td bgcolor="#20C900" width=15>  </td> <td> 7+ parking spots </td> </tr> </table>';
-    legendDiv.style.backgroundColor = "white";
-    legendDiv.style.border = "2px solid black";
-    legendDiv.style.padding = "2px";
-    legendDiv.style.textAlign = "center";
-    legendDiv.style.cursor = "pointer";
+    var legendDiv = $('<table id="legend"> <tr> <td bgcolor="black" width=15>  </td> <td> 0 bikes </td> </tr> <tr> <td bgcolor="red" width=15>  </td> <td> 1-2 bikes </td> </tr> <tr> <td bgcolor="#FFB900" width=15>  </td> <td> 3-6 bikes </td> </tr> <tr> <td bgcolor="#20C900" width=15>  </td> <td> 7+ bikes </td> </tr> </table>')[0];
     this.control = legendDiv;
 }
 
@@ -18,10 +12,10 @@ Biximap.BikeParkingToggle = function() {
   this.showParkingButton = $('<div class="bikeparking-button"> Show parking </div>')[0];
   this.control = $('<div>').append(this.showBikesButton)
                          .append(this.showParkingButton)[0];
-  // Set 'parking' active, to start
-  this.activateBikesCallback().call(this);
   google.maps.event.addDomListener(this.showBikesButton, "click", this.activateBikesCallback());
   google.maps.event.addDomListener(this.showParkingButton, "click", this.activateParkingCallback());
+  // Set 'bikes' active, to start
+  this.activateBikesCallback().call(this);
 }
 
 
@@ -38,10 +32,10 @@ Biximap.BikeParkingToggle.prototype.activateBikesCallback = function() {
       Biximap.state.bikeMarkers[id].setVisible(true)
       Biximap.state.parkingMarkers[id].setVisible(false)
     }
-    var tables = document.getElementsByTagName('td');
-    for (var i = 0; i < tables.length; i++) {
-      tables[i].innerHTML = tables[i].innerHTML.replace('parking spots', 'bikes');
-    }
+    $('#legend td').each(function () {
+      oldText = $(this).text();
+      $(this).text(oldText.replace('parking spots', 'bikes'));
+    });
   };
 }
 
