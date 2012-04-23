@@ -174,7 +174,6 @@ var google, document, window, GIcon, GSize, GPoint;
         Biximap.state.bikeMarkers[id].setVisible(false);
         Biximap.state.parkingMarkers[id].setVisible(true);
       }
-      tables = document.getElementsByTagName('td');
       // Update the legend
       $('#legend td').each(function () {
         var oldText = $(this).text();
