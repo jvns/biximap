@@ -1,5 +1,6 @@
 var Biximap = {}; // global variable
 Biximap.state = {};
+// A bunch of globals for google & the DOM
 var google, document, window, GIcon, GSize, GPoint;
 (function ($) {
   "use strict";
@@ -7,32 +8,28 @@ var google, document, window, GIcon, GSize, GPoint;
    * Init function for the map
    **********************************/
   Biximap.initialize = function() {
-    // initialize the map
+    // Initialize the map
     var montreal = new google.maps.LatLng(45.50811761960114, -73.5747367143631);
     var mapOptions = {
       zoom: 13,
       center: montreal,
       mapTypeId: google.maps.MapTypeId.ROADMAP
     };
-    var map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
-    var legendControl,
-    bikeParkingToggle;
+    var map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions),
+        legendControl,
+        bikeParkingToggle;
     Biximap.state.map = map;
-    // Add an infowindow 
-    Biximap.state.infowindow = new google.maps.InfoWindow();
-    google.maps.event.addListener(Biximap.state.map, 'click', function() {Biximap.state.infowindow.close();});
-    // Initialize the controls
+    // Initialize the legend control
     legendControl = new Biximap.LegendControl();
-    legendControl.control.index = 2;
+    Biximap.state.legendControl = legendControl;
     map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(legendControl.control);
+    // Initialize the bike/parking toggle control
     bikeParkingToggle = new Biximap.BikeParkingToggle();
     Biximap.state.bikeParkingToggle = bikeParkingToggle;
-    bikeParkingToggle.control.index = 2;
-    // Initialize the search widget
     map.controls[google.maps.ControlPosition.RIGHT_TOP].push(bikeParkingToggle.control);
-    // keyboard shortcut: '/' => focus search box
+    // Set up keyboard shortcut: '/' => focus search box
     $(document).bind('keyup', '/', function() {$('#search').focus();});
-    // update the map once every five minutes
+    // Set callback to update the map once every five minutes
     window.setInterval(function() {Biximap.updateMap();}, 300000); 
     // Update the map for the first time
     Biximap.updateMap();
@@ -43,13 +40,14 @@ var google, document, window, GIcon, GSize, GPoint;
    **********************************/
   // get and parse the availability data
   Biximap.updateMap = function() {
-    var queryString,
-        station_names;
+    var queryString;
     $('updateNotice').show('fast');
     queryString = window.location.search.substring(1);
     $(document).ready( function() {
+      var station_names;
       $.getJSON("getData.php?" + queryString, function(stations) {
         Biximap.state.stations = stations;
+        // Only show stations that have been installed
         for (var id in stations) {
           if (stations.hasOwnProperty(id)) {
             if (stations[id].installed === "false") {
@@ -57,8 +55,9 @@ var google, document, window, GIcon, GSize, GPoint;
             }
           }
         }
+        // Set up all the markers
         Biximap.updateMarkers();
-        // set up autocomplete (todo: put this somewhere better)
+        // Set up the autocomplete 
         station_names = [];
         for (id in stations) {
           if (stations.hasOwnProperty(id)) {
@@ -68,30 +67,38 @@ var google, document, window, GIcon, GSize, GPoint;
         $("#search").autocomplete({
           matchContains: true, 
           mustMatch: false,
-          source: station_names
+          source: function( request, response) {
+            var matcher = new RegExp( $.ui.autocomplete.escapeRegex( request.term ), "i" );
+            response( $.grep( station_names, function( value ) {
+              value = value.responselabel || value.value || value;
+              return matcher.test( value ) || matcher.test( Biximap.stripAccents( value ) );
+            }) );
+          }
         });
       }
      );
     });
-    $('updateNotice').hide('fast');
   };
 
+  // Does what it says on the tin
   Biximap.updateMarkers = function() {
     var stations = Biximap.state.stations,
-    map = Biximap.state.map,
-    oldBikeMarkers    = Biximap.state.bikeMarkers,
-    oldParkingMarkers = Biximap.state.parkingMarkers,
-    newBikeMarkers    = Biximap.createMarkers(stations, 'nbBikes', Biximap.discreteColor, map),
-    newParkingMarkers = Biximap.createMarkers(stations, 'nbParking', Biximap.discreteColor, map),
-    i;
-    // Delete old markers
-    for (i in oldBikeMarkers) {
-      oldBikeMarkers[i].setMap(null);
-      oldParkingMarkers[i].setMap(null);
+        map = Biximap.state.map,
+        oldBikeMarkers    = Biximap.state.bikeMarkers,
+        oldParkingMarkers = Biximap.state.parkingMarkers,
+        newBikeMarkers    = Biximap.createMarkers(stations, 'nbBikes', Biximap.discreteColor, map),
+        newParkingMarkers = Biximap.createMarkers(stations, 'nbParking', Biximap.discreteColor, map),
+        i;
+    // Delete all the old markers
+    // they're indexed by station ID
+    for (var id in oldBikeMarkers) {
+      oldBikeMarkers[id].setMap(null);
+      oldParkingMarkers[id].setMap(null);
     }
     Biximap.state.bikeMarkers = newBikeMarkers;
     Biximap.state.parkingMarkers = newParkingMarkers;
-    for (var id in newParkingMarkers) {
+    // Only show the appropriate markers
+    for (id in newParkingMarkers) {
       if (Biximap.state.markertype === 'parking') {
         newBikeMarkers[id].setVisible(false);
       } else {
@@ -104,37 +111,45 @@ var google, document, window, GIcon, GSize, GPoint;
  * Legend, search, and bike parking toggle controls *
  ****************************************************/
 
+  // Control for the legend
   Biximap.LegendControl = function() {
     var legendDiv = $('<table id="legend"> <tr> <td bgcolor="black" width=15>  </td> <td> 0 bikes </td> </tr> <tr> <td bgcolor="red" width=15>  </td> <td> 1-2 bikes </td> </tr> <tr> <td bgcolor="#FFB900" width=15>  </td> <td> 3-6 bikes </td> </tr> <tr> <td bgcolor="#20C900" width=15>  </td> <td> 7+ bikes </td> </tr> </table>')[0];
     this.control = legendDiv;
+    this.control.index = 2;
   };
 
+  // Control for the bike/parking toggle
   Biximap.BikeParkingToggle = function() {
     var self = this;
     this.showBikesButton = $('<div class="bikeparking-button"> Show bikes </div>')[0];
     this.showParkingButton = $('<div class="bikeparking-button"> Show parking </div>')[0];
     this.control = $('<div>').append(this.showBikesButton)
                              .append(this.showParkingButton)[0];
+    this.control.index = 2;
     google.maps.event.addDomListener(this.showBikesButton, "click", this.activateBikesCallback());
     google.maps.event.addDomListener(this.showParkingButton, "click", this.activateParkingCallback());
     // Set 'bikes' active, to start
     this.activateBikesCallback().call(this);
   };
 
-
   Biximap.BikeParkingToggle.prototype.activateBikesCallback = function() {
     var self = this;
     return function() {
       if (Biximap.state.markertype === 'bike') {
+        // Nothing to do
         return;
       }
+      // Update the toggle control
       $(self.showBikesButton).addClass('active');
       $(self.showParkingButton).removeClass('active');
+      // Set the state
       Biximap.state.markertype = 'bike';
+      // Flip the visibility state of all the markers
       for (var id in Biximap.state.bikeMarkers) {
         Biximap.state.bikeMarkers[id].setVisible(true);
         Biximap.state.parkingMarkers[id].setVisible(false);
       }
+      // Update the legend
       $('#legend td').each(function () {
         var oldText = $(this).text();
         $(this).text(oldText.replace('parking spots', 'bikes'));
@@ -143,23 +158,28 @@ var google, document, window, GIcon, GSize, GPoint;
   };
 
   Biximap.BikeParkingToggle.prototype.activateParkingCallback = function() {
-    var self = this,
-    tables;
+    var self = this;
     return function() {
       if (Biximap.state.markertype === 'parking') {
+        // Nothing to do
         return;
       }
+      // Update the toggle control
       $(self.showBikesButton).removeClass('active');
       $(self.showParkingButton).addClass('active');
+      // Set the state
       Biximap.state.markertype = 'parking';
+      // Flip the visibility state of all the markers
       for (var id in Biximap.state.parkingMarkers) {
         Biximap.state.bikeMarkers[id].setVisible(false);
         Biximap.state.parkingMarkers[id].setVisible(true);
       }
       tables = document.getElementsByTagName('td');
-      for (var i = 0; i < tables.length; i++) {
-        tables[i].innerHTML = tables[i].innerHTML.replace('bikes', 'parking spots');
-      }
+      // Update the legend
+      $('#legend td').each(function () {
+        var oldText = $(this).text();
+        $(this).text(oldText.replace('bikes', 'parking spots'));
+      });
     };
   };
 
@@ -167,12 +187,19 @@ var google, document, window, GIcon, GSize, GPoint;
 * Functions to make Google Maps markers  *
 ******************************************/
 
+   /*
+    * Parameters:
+    *    stations: list of all the station
+    *    imagecreator: a function that creates marker images
+    *    toggle: gets passed to imagecreator. 'nbBikes'/'nbEmptyDocks'
+    *    map: the Google map to attach markers to
+    */
   Biximap.createMarkers = function (stations, toggle, imagecreator, map) {
     var markers = {};
     for (var id in stations) {
       markers[id] = Biximap.createMarker(stations[id], toggle, imagecreator, map);
     }
-    Biximap.state.tooltip = new Biximap.Tooltip({
+    Biximap.state.tooltip = Biximap.state.tooltip || new Biximap.Tooltip({
       map: map,
       marker: markers[1],
       cssClass: 'tooltip'
@@ -181,44 +208,42 @@ var google, document, window, GIcon, GSize, GPoint;
   };
 
   Biximap.createMarker = function(station, toggle, imagecreator, map) {
-    var iconSize = new google.maps.Size(20,32); 
-    var iconAnchor = new google.maps.Point(10,32); 
-    var infoWindowAnchor = new google.maps.Point(10,3); 
-    var image = imagecreator(station, toggle, map);
-    var marker = new google.maps.Marker({
-      size: iconSize, 
-      anchor: iconAnchor,
-      icon: image,
-      map: map,
-      position: new google.maps.LatLng(station.latitude, station.longitude) 
-    });
+    // Configuration for marker
+    var iconSize = new google.maps.Size(20,32), 
+        iconAnchor = new google.maps.Point(10,32), 
+        infoWindowAnchor = new google.maps.Point(10,3), 
+        image = imagecreator(station, toggle, map),
+        marker = new google.maps.Marker({
+          size: iconSize, 
+          anchor: iconAnchor,
+          icon: image,
+          map: map,
+          position: new google.maps.LatLng(station.latitude, station.longitude) 
+        });
 
+    // Add callback to show tooltip on mouseover
     google.maps.event.addListener(marker, "mouseover", function() {
-      // We always use the same infowindow, just update it as necessary
-      var contentString = "<b>" + station.name + "</b> <br>" + station.nbBikes + " bikes" + ", " + station.nbEmptyDocks + " parking spots";
-      Biximap.state.infowindow.setContent(contentString);
-      //Biximap.state.infowindow.open(map, marker);
+      // Calculate the visualization of the bikes/parking spotes
+      var heading = "<b>" + station.name + "</b> <br>" + station.nbBikes + " bikes" + ", " + station.nbEmptyDocks + " parking spots";
       var drawing = Biximap.bikesVisualization(station);
-      Biximap.state.tooltip.updateOptions({marker: marker, content: contentString + "<br>" + drawing});
-      Biximap.state.tooltip.draw();
+      // We just use one tooltip and update it as necessary
+      Biximap.state.tooltip.updateOptions({marker: marker, content: heading + "<br>" + drawing});
       Biximap.state.tooltip.show();
     });
+    // Add callback to hide tooltip on mouseout
     google.maps.event.addListener(marker, "mouseout", function() {
       Biximap.state.tooltip.hide();
-    });
-
-    google.maps.event.addListener(marker, "mouseout", function() {
-      // $('#infoBox').html('');
     });
     return marker;
   };
 
 
+  // Calculate visualization for a station
   Biximap.bikesVisualization = function(station) {
     var bikebox = "<span class='bike'>&nbsp;</span> ",
-    parking = "<span class='parking'>&nbsp;</span> ",
-    html = "",
-    i;
+        parking = "<span class='parking'>&nbsp;</span> ",
+        html = "",
+        i;
     for (i = 0; i < station.nbBikes; i++) {
       html += bikebox;
     }
@@ -307,6 +332,7 @@ var google, document, window, GIcon, GSize, GPoint;
     }
   };
   Biximap.Tooltip.prototype.show = function() {
+    this.draw();
     if (this.div_) {
       this.div_.style.visibility = "visible";
     }
@@ -413,7 +439,7 @@ var google, document, window, GIcon, GSize, GPoint;
   Biximap.discreteColor = function(station, toggle, map) {
     var attribute,
     url;
-    if (toggle == 'nbBikes') {
+    if (toggle === 'nbBikes') {
       attribute = station.nbBikes;
     } else {
       attribute = station.nbEmptyDocks;
