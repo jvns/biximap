@@ -300,10 +300,10 @@ var google, document, window, GIcon, GSize, GPoint;
     // Position the DIV.
     var div = this.div_;
     var leftBorder = ne.x,
-    topBorder = ne.y,
-    actualLeft,
-    actualTop,
-    amountToFix;
+        topBorder = ne.y,
+        actualLeft,
+        actualTop,
+        amountToFix;
 
     div.style.left = leftBorder + 'px';
     div.style.top = topBorder + 'px';
@@ -346,9 +346,9 @@ var google, document, window, GIcon, GSize, GPoint;
     // makes a shadow for station with id 
     // create the icon
     var baseIcon = new GIcon(),
-    icon,
-    point,
-    marker;
+        icon,
+        point,
+        marker;
     baseIcon.iconSize = new GSize(20,32); 
     baseIcon.iconAnchor = new GPoint(5,32); 
     baseIcon.infoWindowAnchor = new GPoint(10,3); 
@@ -357,11 +357,12 @@ var google, document, window, GIcon, GSize, GPoint;
     marker = Biximap.createMarker(point, stations[id], 0, function () {return icon;});
     return marker;
   };
+
   Biximap.findStation = function (map) {
     var stations = Biximap.state.stations,
-    text = document.getElementById('search').value,
-    latitude,
-    longitude;
+        text = document.getElementById('search').value,
+        latitude,
+        longitude;
     for (var id in stations) {
       if (stations[id].name === text) {
         // zoom to this station's location
