@@ -460,7 +460,6 @@ var google, document, window, GIcon, GSize, GPoint;
       color = "20C900";
     }
     url = "http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%20|" + color + "|000000";
-    console.log(attribute, url);
 
     var image = new google.maps.MarkerImage(
       url,
