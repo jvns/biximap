@@ -438,26 +438,29 @@ var google, document, window, GIcon, GSize, GPoint;
 ****************************************/
   Biximap.discreteColor = function(station, toggle, map) {
     var attribute,
-    url;
+        url,
+        color;
     if (toggle === 'nbBikes') {
       attribute = station.nbBikes;
     } else {
       attribute = station.nbEmptyDocks;
     }
 
-    if (attribute === 0) {
+    if (attribute < 1) {
       // black
-      url = "http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%20|000000|000000";
+      color = "000000";
     } else if (attribute < 3) {
       // red
-      url = "http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%20|FF0000|000000";
+      color = "FF0000";
     } else if (attribute < 7) {
       // orange
-      url = "http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%20|FFB900|000000";
+      color = "FFB900";
     } else {
       // green
-      url = "http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%20|20C900|000000";
+      color = "20C900";
     }
+    url = "http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%20|" + color + "|000000";
+    console.log(attribute, url);
 
     var image = new google.maps.MarkerImage(
       url,
