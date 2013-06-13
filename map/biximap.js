@@ -35,6 +35,17 @@ var google, document, window, GIcon, GSize, GPoint;
     Biximap.updateMap();
   };
 
+  Biximap.getGeoLocation = function() {
+    // Try W3C Geolocation (Preferred)
+    if(navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(function(position) {
+        var initialLocation = new google.maps.LatLng(position.coords.latitude,position.coords.longitude);
+        Biximap.state.map.setCenter(initialLocation);
+        Biximap.state.map.setZoom(16);
+      }, function() {});
+    }
+  }
+
   /**********************************
    * Update functions
    **********************************/

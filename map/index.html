@@ -36,9 +36,10 @@
          <form onSubmit="Biximap.findStation(Biximap.state.map);return false"> 
            Station: <input id="search" size="20"> 
            <input class="button" type="button" value="Go" onClick="Biximap.findStation(Biximap.state.map);return false"> </form>
-
        </span>
-       <span style="float: right"> Source on <a href="http://github.com/jvns/biximap">github</a></span>
+           <input class="button" type='button' value="Zoom to current location" onclick="Biximap.getGeoLocation();return false" style="float: right; margin-left:20px;"> 
+
+       <span style="float: right;"> Source on <a href="http://github.com/jvns/biximap">github</a></span>
      </div>
      <div id="map_canvas" style=""> </div>
    </body>
